@@ -13,7 +13,7 @@ def generate_launch_description():
     
     # Model xacro file path:
     xacro_file = PathJoinSubstitution([
-        FindPackageShare('bastion_description'),
+        FindPackageShare('darwin_description'),
         'urdf',
         'darwin.urdf.xacro'
     ])
