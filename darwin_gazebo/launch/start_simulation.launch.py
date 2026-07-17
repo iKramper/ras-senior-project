@@ -37,7 +37,6 @@ def generate_launch_description():
 
     # Launch files:
     start_world    = PathJoinSubstitution([pkg_gz,   "launch", "start_world.launch.py"])
-    # spawn_models     = PathJoinSubstitution([pkg_gz,   "launch", "spawn_models.launch.py"])
     publish_urdf       = PathJoinSubstitution([pkg_desc, "launch", "publish_urdf.launch.py"])
     spawn_darwin     = PathJoinSubstitution([pkg_gz,   "launch", "spawn_darwin.launch.py"])
 
@@ -60,15 +59,6 @@ def generate_launch_description():
                 launch_arguments={'use_sim_time': use_sim_time}.items()
             ) ]
         ),
-
-        # # 3. Spawn the models in Gazebo:
-        # TimerAction(
-        #     period=5.0,
-        #     actions=[ IncludeLaunchDescription(
-        #         PythonLaunchDescriptionSource(spawn_models),
-        #         launch_arguments={'use_sim_time': use_sim_time}.items()
-        #     ) ]
-        # ),
 
         # 3. Spawn the robot in Gazebo:
         TimerAction(

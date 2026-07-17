@@ -37,36 +37,7 @@ def generate_launch_description():
         "config",
         "style.config"
     ])
-    
-    # Update all Gazebo model paths:
-    # gazebo_models_path = os.path.join(
-    #     get_package_share_directory("bastion_gazebo"),
-    #     "models"
-    # )
-    
-    # Paths for robot model and plugins:
-    # install_dir_model = get_package_prefix("bastion_description") # HAVE AN EYE ON THIS
-
-    # Environment variables configuration:
-    # env_vars = [
-    #     SetEnvironmentVariable(
-    #         name='GAZEBO_MODEL_PATH',
-    #         value=(
-    #             os.environ.get('GAZEBO_MODEL_PATH', '') + ':' +
-    #             install_dir_model + "/share" + ':' + gazebo_models_path
-    #         )
-    #     ),
-    #     SetEnvironmentVariable(
-    #         name='GZ_SIM_RESOURCE_PATH',
-    #         value=(
-    #             os.environ.get('GZ_SIM_RESOURCE_PATH', '') + ':' +
-    #             install_dir_model + "/share" + ':' + gazebo_models_path
-    #         )
-    #     )
-    # ]
-
-
-    
+        
     # Gazebo launch description:
     # -r         : run (no GUI pause at startup)
     # -v 4       : verbosity level 4
@@ -85,7 +56,6 @@ def generate_launch_description():
     )
     
     return LaunchDescription(
-        # env_vars + [
         [
             gazebo,
             DeclareLaunchArgument(
