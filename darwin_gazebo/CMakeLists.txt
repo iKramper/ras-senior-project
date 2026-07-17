@@ -12,7 +12,16 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+# Packages
+
 find_package(ament_cmake REQUIRED)
+find_package(gz-cmake3 REQUIRED)
+
+gz_find_package(gz-plugin2 REQUIRED COMPONENTS register)
+set(GZ_PLUGIN_VER ${gz-plugin2_VERSION_MAJOR})
+
+gz_find_package(gz-sim8 REQUIRED)
+set(GZ_SIM_VER ${gz-sim8_VERSION_MAJOR})
 
 install(DIRECTORY launch config worlds
     DESTINATION share/${PROJECT_NAME} 
