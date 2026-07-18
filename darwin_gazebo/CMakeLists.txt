@@ -23,7 +23,7 @@ set(GZ_PLUGIN_VER ${gz-plugin2_VERSION_MAJOR})
 gz_find_package(gz-sim8 REQUIRED)
 set(GZ_SIM_VER ${gz-sim8_VERSION_MAJOR})
 
-install(DIRECTORY launch config worlds
+install(DIRECTORY launch config urdf worlds
     DESTINATION share/${PROJECT_NAME} 
 )
 
