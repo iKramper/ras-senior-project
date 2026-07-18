@@ -35,7 +35,7 @@ ARGUMENTS = [
 def get_robot_description():
     pkg_darwin_gazebo = get_package_share_directory('darwin_gazebo')
     pkg_darwin_description = get_package_share_directory('darwin_description')
-    robot_description_path = os.path.join(pkg_darwin_description, 'urdf', 'darwin.urdf.xacro')
+    robot_description_path = os.path.join(pkg_darwin_gazebo, 'urdf', 'darwin_gz.urdf.xacro')
     mappings = {}
     robot_description_config = process_file(robot_description_path, mappings=mappings)
     robot_desc = robot_description_config.toprettyxml(indent='  ')
