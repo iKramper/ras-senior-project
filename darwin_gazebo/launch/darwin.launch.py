@@ -17,7 +17,7 @@ from nav2_common.launch import ReplaceString
 # -------------------------- LAUNCH ARGUMENTS -----------------------------#
 
 ARGUMENTS = [
-    DeclareLaunchArgument('world_name', default_value='test_world.sdf'),
+    DeclareLaunchArgument('world_name', default_value='empty.sdf'),
     DeclareLaunchArgument('ros_bridge', default_value='True'),
     DeclareLaunchArgument('initial_pose_x', default_value='0.5'),
     DeclareLaunchArgument('initial_pose_y', default_value='0.0'),
