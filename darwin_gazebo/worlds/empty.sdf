@@ -179,20 +179,6 @@
                 </gz-gui>
             </plugin>
 
-            <!-- Insert lights -->
-            <plugin filename="Lights" name="Lights">
-                <gz-gui>
-                    <property key="resizable" type="bool">false</property>
-                    <property key="x" type="double">250</property>
-                    <property key="y" type="double">0</property>
-                    <property key="width" type="double">150</property>
-                    <property key="height" type="double">50</property>
-                    <property key="state" type="string">floating</property>
-                    <property key="showTitleBar" type="bool">false</property>
-                    <property key="cardBackground" type="string">#666666</property>
-                </gz-gui>
-            </plugin>
-
             <!-- Translate / rotate -->
             <plugin filename="TransformControl" name="Transform control">
                 <gz-gui>
@@ -200,20 +186,6 @@
                     <property key="x" type="double">0</property>
                     <property key="y" type="double">50</property>
                     <property key="width" type="double">250</property>
-                    <property key="height" type="double">50</property>
-                    <property key="state" type="string">floating</property>
-                    <property key="showTitleBar" type="bool">false</property>
-                    <property key="cardBackground" type="string">#777777</property>
-                </gz-gui>
-            </plugin>
-
-            <!-- Screenshot -->
-            <plugin filename="Screenshot" name="Screenshot">
-                <gz-gui>
-                    <property key="resizable" type="bool">false</property>
-                    <property key="x" type="double">250</property>
-                    <property key="y" type="double">50</property>
-                    <property key="width" type="double">50</property>
                     <property key="height" type="double">50</property>
                     <property key="state" type="string">floating</property>
                     <property key="showTitleBar" type="bool">false</property>
