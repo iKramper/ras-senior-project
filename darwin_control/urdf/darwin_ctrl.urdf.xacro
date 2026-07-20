@@ -12,7 +12,7 @@
         <!-- HEAD -->
         <joint name="neck_joint">
             <command_interface name="position">
-                <param name="min">0.091</param>
+                <param name="min">0.878</param>
                 <param name="max">3.963</param>
             </command_interface>
             <state_interface name="position">
@@ -37,8 +37,8 @@
 
         <joint name="l_biceps_joint">
             <command_interface name="position">
-                <param name="min">3.841</param>
-                <param name="max">4.104</param>
+                <param name="min">3.200</param>
+                <param name="max">5.038</param>
             </command_interface>
             <state_interface name="position">
                 <param name="initial_value">3.9</param>
@@ -74,8 +74,8 @@
 
         <joint name="r_biceps_joint">
             <command_interface name="position">
-                <param name="min">0.906</param>
-                <param name="max">1.175</param>
+                <param name="min">0.312</param>
+                <param name="max">1.840</param>
             </command_interface>
             <state_interface name="position">
                 <param name="initial_value">1.0</param>
@@ -86,7 +86,7 @@
 
         <joint name="r_elbow_joint">
             <command_interface name="position">
-                <param name="min">0.594</param>
+                <param name="min">1.075</param>
                 <param name="max">3.764</param>
             </command_interface>
             <state_interface name="position">
@@ -100,7 +100,7 @@
         <joint name="l_hip_joint">
             <command_interface name="position">
                 <param name="min">0.000</param>
-                <param name="max">0.113</param>
+                <param name="max">0.115</param>
             </command_interface>
             <state_interface name="position">
                 <param name="initial_value">0.0</param>
@@ -135,8 +135,8 @@
 
         <joint name="l_ankle_joint">
             <command_interface name="position">
-                <param name="min">0.991</param>
-                <param name="max">3.142</param>
+                <param name="min">0.000</param>
+                <param name="max">0.453</param>
             </command_interface>
             <state_interface name="position">
                 <param name="initial_value">1.0</param>
@@ -197,10 +197,10 @@
         <joint name="r_ankle_joint">
             <command_interface name="position">
                 <param name="min">0.000</param>
-                <param name="max">1.302</param>
+                <param name="max">0.500</param>
             </command_interface>
             <state_interface name="position">
-                <param name="initial_value">0.9</param>
+                <param name="initial_value">0.0</param>
             </state_interface>
             <state_interface name="velocity"/>
             <state_interface name="effort"/>
