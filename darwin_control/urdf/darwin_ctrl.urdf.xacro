@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="darwin">
+
+    <xacro:include filename="$(find darwin_gazebo)/urdf/darwin_gz.urdf.xacro"/>
+    <xacro:arg name="controller" default="ros_controller"/>
+
+    <ros2_control name="GazeboSimSystem" type="system">
+        <hardware>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+
+        <!-- HEAD -->
+        <joint name="neck_joint">
+            <command_interface name="position">
+                <param name="min">0.091</param>
+                <param name="max">3.963</param>
+            </command_interface>
+            <state_interface name="position">
+                <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <!-- LEFT ARM -->
+
+
+    </ros2_control>
+
+</robot>
