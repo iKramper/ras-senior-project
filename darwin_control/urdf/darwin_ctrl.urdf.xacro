@@ -16,7 +16,7 @@
                 <param name="max">3.963</param>
             </command_interface>
             <state_interface name="position">
-                <param name="initial_value">0.1</param>
+                <param name="initial_value">1.0</param>
             </state_interface>
             <state_interface name="velocity"/>
             <state_interface name="effort"/>
@@ -139,7 +139,7 @@
                 <param name="max">0.453</param>
             </command_interface>
             <state_interface name="position">
-                <param name="initial_value">1.0</param>
+                <param name="initial_value">0.2</param>
             </state_interface>
             <state_interface name="velocity"/>
             <state_interface name="effort"/>
