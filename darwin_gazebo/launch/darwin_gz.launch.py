@@ -66,7 +66,7 @@ def generate_launch_description():
         ),
     )
 
-    # 4. Start clock bridge
+    # 4. Start bridge's clock
     ld.add_action(
     Node(
         package='ros_gz_bridge',
@@ -103,7 +103,6 @@ def generate_launch_description():
     )
 
     # 6. Spawn the robot
-
     entity = LaunchConfiguration('entity')
     initial_pose_x = LaunchConfiguration('initial_pose_x')
     initial_pose_y = LaunchConfiguration('initial_pose_y')
