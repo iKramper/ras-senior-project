@@ -38,10 +38,9 @@ def get_robot_description():
     )
     return robot_desc
 
-#2. Generate launch description
+# 2. Generate launch description
 def generate_launch_description():
     ld = LaunchDescription(ARGUMENTS)
-
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
     pkg_darwin_ctrl = get_package_share_directory('darwin_control')
     pkg_darwin_gz = get_package_share_directory('darwin_gazebo')
@@ -49,9 +48,10 @@ def generate_launch_description():
     world_name = LaunchConfiguration('world_name')
     ros_bridge = LaunchConfiguration('ros_bridge')
     world_path = PathJoinSubstitution([pkg_darwin_gz,'worlds',world_name])
-    controller_config_path = os.path.join(pkg_darwin_ctrl, 'config', 'nao_controller_manager.yaml')
+    controller_config_path = os.path.join(pkg_darwin_ctrl, 'config', 'darwin_controller_manager.yaml')
     bridge_config_file_path = os.path.join(pkg_darwin_gz, 'config', 'bridge_config.yaml')
 
+    # 3. Launch Gazebo
     ld.add_action(
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(gz_launch_path),
@@ -62,17 +62,19 @@ def generate_launch_description():
         ),
     )
 
+    # 4. Start bridge's clock 
     ld.add_action(
         Node(
                 package='ros_gz_bridge',
                 executable='parameter_bridge',
                 arguments=['/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock'],
                 output='screen',
-                namespace='andino_gz_sim',
+                namespace='darwin_gz_sim',
                 condition=IfCondition(ros_bridge),
             ),
     )
 
+    # 5. Start robot state publisher
     use_sim_time = LaunchConfiguration('use_sim_time')
     rsp_frequency = LaunchConfiguration('rsp_frequency')
 
@@ -96,13 +98,14 @@ def generate_launch_description():
         ),
     )
 
+    # 6. Spawn the robot
     entity = LaunchConfiguration('entity')
     initial_pose_x = LaunchConfiguration('initial_pose_x')
     initial_pose_y = LaunchConfiguration('initial_pose_y')
     initial_pose_z = LaunchConfiguration('initial_pose_z')
     initial_pose_yaw = LaunchConfiguration('initial_pose_yaw')
     robot_description_topic = LaunchConfiguration('robot_description_topic')
-    nao_gz_spawn = Node(
+    darwin_gz_spawn = Node(
             package='ros_gz_sim',
             executable='create',
             arguments=[
@@ -118,16 +121,17 @@ def generate_launch_description():
             output='screen',
         )
     ld.add_action(
-        nao_gz_spawn
+        darwin_gz_spawn
     )
 
+    # 7. Start and execute the controllers
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
         executable='spawner',
         arguments=['joint_state_broadcaster'],
     )
 
-    nao_controller_spawner_head = Node(
+    darwin_controller_spawner_head = Node(
         package='controller_manager',
         executable='spawner',
         arguments=['joint_trajectory_controller_head',
@@ -136,7 +140,7 @@ def generate_launch_description():
         ],
     )
 
-    nao_controller_spawner_right_leg = Node(
+    darwin_controller_spawner_right_leg = Node(
         package='controller_manager',
         executable='spawner',
         arguments=['joint_trajectory_controller_right_leg',
@@ -145,7 +149,7 @@ def generate_launch_description():
         ],
     )
 
-    nao_controller_spawner_right_arm = Node(
+    darwin_controller_spawner_right_arm = Node(
         package='controller_manager',
         executable='spawner',
         arguments=['joint_trajectory_controller_right_arm',
@@ -154,7 +158,7 @@ def generate_launch_description():
         ],
     )
 
-    nao_controller_spawner_left_leg = Node(
+    darwin_controller_spawner_left_leg = Node(
         package='controller_manager',
         executable='spawner',
         arguments=['joint_trajectory_controller_left_leg',
@@ -163,7 +167,7 @@ def generate_launch_description():
         ],
     )
 
-    nao_controller_spawner_left_arm = Node(
+    darwin_controller_spawner_left_arm = Node(
         package='controller_manager',
         executable='spawner',
         arguments=['joint_trajectory_controller_left_arm',
@@ -174,7 +178,7 @@ def generate_launch_description():
 
     ld.add_action(RegisterEventHandler(
             event_handler=OnProcessExit(
-                target_action=nao_gz_spawn,
+                target_action=darwin_gz_spawn,
                 on_exit=[joint_state_broadcaster_spawner],
             )
         )
@@ -183,7 +187,7 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=joint_state_broadcaster_spawner,
-                on_exit=[nao_controller_spawner_head],
+                on_exit=[darwin_controller_spawner_head],
             )
         )
     )
@@ -191,7 +195,7 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=joint_state_broadcaster_spawner,
-                on_exit=[nao_controller_spawner_left_arm],
+                on_exit=[darwin_controller_spawner_left_arm],
             )
         )
     )
@@ -199,7 +203,7 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=joint_state_broadcaster_spawner,
-                on_exit=[nao_controller_spawner_left_leg],
+                on_exit=[darwin_controller_spawner_left_leg],
             )
         )
     )
@@ -207,7 +211,7 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=joint_state_broadcaster_spawner,
-                on_exit=[nao_controller_spawner_right_arm],
+                on_exit=[darwin_controller_spawner_right_arm],
             )
         )
     )
@@ -215,24 +219,26 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=joint_state_broadcaster_spawner,
-                on_exit=[nao_controller_spawner_right_leg],
+                on_exit=[darwin_controller_spawner_right_leg],
             )
         )
     )
-    # bridge_config = ReplaceString(
-    #     source_file=bridge_config_file_path,
-    #     replacements={'<entity>': entity},
-    # )
 
-    # ld.add_action(
-    #     Node(
-    #         package='ros_gz_bridge',
-    #         executable='parameter_bridge',
-    #         output='screen',
-    #         parameters=[{
-    #             'config_file': bridge_config
-    #         }],
-    #     )
-    # )
+    # 8. Finish and execute the bridge
+    bridge_config = ReplaceString(
+        source_file=bridge_config_file_path,
+        replacements={'<entity>': entity},
+    )
+
+    ld.add_action(
+        Node(
+            package='ros_gz_bridge',
+            executable='parameter_bridge',
+            output='screen',
+            parameters=[{
+                'config_file': bridge_config
+            }],
+        )
+    )
 
     return ld
