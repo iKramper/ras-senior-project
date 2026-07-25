@@ -105,13 +105,9 @@ public:
 private:
 
   rclcpp_action::Client<FollowJointTrajectory>::SharedPtr head_client_ptr_;
-
   rclcpp_action::Client<FollowJointTrajectory>::SharedPtr left_arm_client_ptr_;
-
   rclcpp_action::Client<FollowJointTrajectory>::SharedPtr right_arm_client_ptr_;
-
   rclcpp_action::Client<FollowJointTrajectory>::SharedPtr left_leg_client_ptr_;
-
   rclcpp_action::Client<FollowJointTrajectory>::SharedPtr right_leg_client_ptr_;
 
 }; // class HomePosition
