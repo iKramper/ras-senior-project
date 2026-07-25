@@ -8,9 +8,12 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "rclcpp_components/register_node_macro.hpp"
 
-namespace cpp_srvcli_actions
+#include "control_msgs/action/follow_joint_trajectory.hpp"
+#include "trajectory_msgs/msg/joint_trajectory_point.hpp"
+
+namespace darwin_control
 {
-class FibonacciActionClient : public rclcpp::Node
+class HomePosition : public rclcpp::Node
 {
 public:
   using Fibonacci = custom_action_interfaces::action::Fibonacci;
