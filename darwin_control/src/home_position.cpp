@@ -13,28 +13,33 @@
 
 namespace darwin_control
 {
+
 class HomePosition : public rclcpp::Node
 {
 public:
-  using Fibonacci = custom_action_interfaces::action::Fibonacci;
-  using GoalHandleFibonacci = rclcpp_action::ClientGoalHandle<Fibonacci>;
 
-  explicit FibonacciActionClient(const rclcpp::NodeOptions & options)
-  : Node("fibonacci_action_client", options)
+  using FollowJointTrajectory =
+    control_msgs::action::FollowJointTrajectory;
+
+  using JointTrajectoryPoint =
+    trajectory_msgs::msg::JointTrajectoryPoint;
+
+  using GoalHandleFollowJointTrajectory =
+    rclcpp_action::ClientGoalHandle<FollowJointTrajectory>;
+
+
+  explicit HomePosition(const rclcpp::NodeOptions & options)
+  : Node("home_position", options)
   {
     this->client_ptr_ = rclcpp_action::create_client<Fibonacci>(
       this,
       "fibonacci");
-
-    auto timer_callback_lambda = [this](){ return this->send_goal(); };
-    this->timer_ = this->create_wall_timer(
-      std::chrono::milliseconds(500),
-      timer_callback_lambda);
   }
+
 
   void send_goal()
   {
-    using namespace std::placeholders;
+       using namespace std::placeholders;
 
     this->timer_->cancel();
 
@@ -96,11 +101,21 @@ public:
     this->client_ptr_->async_send_goal(goal_msg, send_goal_options);
   }
 
-private:
-  rclcpp_action::Client<Fibonacci>::SharedPtr client_ptr_;
-  rclcpp::TimerBase::SharedPtr timer_;
-};  // class FibonacciActionClient
 
-}  // namespace cpp_srvcli_actions
+private:
+
+  rclcpp_action::Client<FollowJointTrajectory>::SharedPtr head_client_ptr_;
+
+  rclcpp_action::Client<FollowJointTrajectory>::SharedPtr left_arm_client_ptr_;
+
+  rclcpp_action::Client<FollowJointTrajectory>::SharedPtr right_arm_client_ptr_;
+
+  rclcpp_action::Client<FollowJointTrajectory>::SharedPtr left_leg_client_ptr_;
+
+  rclcpp_action::Client<FollowJointTrajectory>::SharedPtr right_leg_client_ptr_;
+
+}; // class HomePosition
+
+} // namespace darwin_control
 
 RCLCPP_COMPONENTS_REGISTER_NODE(cpp_srvcli_actions::FibonacciActionClient)
