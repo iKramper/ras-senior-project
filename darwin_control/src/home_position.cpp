@@ -13,7 +13,6 @@
 
 namespace darwin_control
 {
-
 class HomePosition : public rclcpp::Node
 {
 public:
@@ -27,53 +26,83 @@ public:
   using GoalHandleFollowJointTrajectory =
     rclcpp_action::ClientGoalHandle<FollowJointTrajectory>;
 
-
   explicit HomePosition(const rclcpp::NodeOptions & options)
   : Node("home_position", options)
   {
-    head_client_ptr_ =
-        rclcpp_action::create_client<FollowJointTrajectory>(
-            this,
-            "/joint_trajectory_controller_head/follow_joint_trajectory");
+    home_client_ptr_ = rclcpp_action::create_client<FollowJointTrajectory>(
+        this,
+        "/joint_trajectory_controller_general/follow_joint_trajectory");
 
-    left_arm_client_ptr_ =
-        rclcpp_action::create_client<FollowJointTrajectory>(
-            this,
-            "/joint_trajectory_controller_left_arm/follow_joint_trajectory");
-
-    right_arm_client_ptr_ =
-        rclcpp_action::create_client<FollowJointTrajectory>(
-            this,
-            "/joint_trajectory_controller_right_arm/follow_joint_trajectory");
-
-    left_leg_client_ptr_ =
-        rclcpp_action::create_client<FollowJointTrajectory>(
-            this,
-            "/joint_trajectory_controller_left_leg/follow_joint_trajectory");
-
-    right_leg_client_ptr_ =
-        rclcpp_action::create_client<FollowJointTrajectory>(
-            this,
-            "/joint_trajectory_controller_right_leg/follow_joint_trajectory");
+    auto timer_callback_lambda = [this](){ return this->send_goal(); };
+    this->timer_ = this->create_wall_timer(
+      std::chrono::milliseconds(500),
+      timer_callback_lambda);
   }
-
 
   void send_goal()
   {
-    using namespace std::placeholders;
+    this->timer_->cancel();
 
-    if (!this->client_ptr_->wait_for_action_server()) {
+    if (!this->home_client_ptr_->wait_for_action_server()) {
       RCLCPP_ERROR(this->get_logger(), "Action server not available after waiting");
       rclcpp::shutdown();
     }
 
-    auto goal_msg = Fibonacci::Goal();
-    goal_msg.order = 10;
+    auto goal_msg = FollowJointTrajectory::Goal();
+
+    goal_msg.trajectory.joint_names =
+    {
+      "neck_joint",
+      "r_hip_joint",
+      "r_thigh_joint",
+      "r_knee_joint",
+      "r_ankle_joint",
+      "r_foot_joint",
+      "r_shoulder_joint",
+      "r_biceps_joint",
+      "r_elbow_joint",
+      "l_hip_joint",
+      "l_thigh_joint",
+      "l_knee_joint",
+      "l_ankle_joint",
+      "l_foot_joint",
+      "l_shoulder_joint",
+      "l_biceps_joint",
+      "l_elbow_joint"
+    };
+
+    JointTrajectoryPoint home_point;
+
+    home_point.positions =
+    {
+      2.66,  // neck_joint
+      5.23,  // r_hip_joint
+      0.00,  // r_thigh_joint
+      1.78,  // r_knee_joint
+      0.00,  // r_ankle_joint
+      0.00,  // r_foot_joint
+      2.27,  // r_shoulder_joint
+      1.54,  // r_biceps_joint
+      3.31,  // r_elbow_joint
+      0.00,  // l_hip_joint
+      0.00,  // l_thigh_joint
+      1.84,  // l_knee_joint
+      0.00,  // l_ankle_joint
+      5.23,  // l_foot_joint
+      2.60,  // l_shoulder_joint
+      3.76,  // l_biceps_joint
+      1.75   // l_elbow_joint
+    };
+
+    home_point.time_from_start =
+      rclcpp::Duration::from_seconds(3).to_builtin_duration();
+
+    goal_msg.trajectory.points.push_back(home_point);
 
     RCLCPP_INFO(this->get_logger(), "Sending goal");
 
-    auto send_goal_options = rclcpp_action::Client<Fibonacci>::SendGoalOptions();
-    send_goal_options.goal_response_callback = [this](const GoalHandleFibonacci::SharedPtr & goal_handle)
+    auto send_goal_options = rclcpp_action::Client<FollowJointTrajectory>::SendGoalOptions();
+    send_goal_options.goal_response_callback = [this](const GoalHandleFollowJointTrajectory::SharedPtr & goal_handle)
     {
       if (!goal_handle) {
         RCLCPP_ERROR(this->get_logger(), "Goal was rejected by server");
@@ -82,21 +111,30 @@ public:
       }
     };
 
-    send_goal_options.feedback_callback = [this](
-      GoalHandleFibonacci::SharedPtr,
-      const std::shared_ptr<const Fibonacci::Feedback> feedback)
+    send_goal_options.feedback_callback =
+      [this](
+        GoalHandleFollowJointTrajectory::SharedPtr,
+        const std::shared_ptr<const FollowJointTrajectory::Feedback> feedback)
     {
       std::stringstream ss;
-      ss << "Next number in sequence received: ";
-      for (auto number : feedback->partial_sequence) {
-        ss << number << " ";
+      ss << "Desired and current positions:\n";
+      for (size_t i = 0; i < feedback->joint_names.size(); ++i)
+      {
+        ss << feedback->joint_names[i]
+           << ": Desired: "
+           << feedback->desired.positions[i]
+           << " Current: "
+           << feedback->actual.positions[i]
+           << "\n";
       }
       RCLCPP_INFO(this->get_logger(), ss.str().c_str());
     };
 
-    send_goal_options.result_callback = [this](const GoalHandleFibonacci::WrappedResult & result)
+    send_goal_options.result_callback =
+      [this](const GoalHandleFollowJointTrajectory::WrappedResult & result)
     {
-      switch (result.code) {
+      switch (result.code)
+      {
         case rclcpp_action::ResultCode::SUCCEEDED:
           break;
         case rclcpp_action::ResultCode::ABORTED:
@@ -109,28 +147,30 @@ public:
           RCLCPP_ERROR(this->get_logger(), "Unknown result code");
           return;
       }
-      std::stringstream ss;
-      ss << "Result received: ";
-      for (auto number : result.result->sequence) {
-        ss << number << " ";
+
+      if (result.result->error_code != FollowJointTrajectory::Result::SUCCESSFUL){
+        RCLCPP_ERROR(this->get_logger(),
+          "Trajectory failed.\n"
+          "Error code: %d\n"
+          "Description: %s",
+          result.result->error_code,
+          result.result->error_string.c_str());
+        return;
       }
-      RCLCPP_INFO(this->get_logger(), ss.str().c_str());
+
+      RCLCPP_INFO(this->get_logger(),"Robot is now in HOME position");
       rclcpp::shutdown();
     };
-    this->client_ptr_->async_send_goal(goal_msg, send_goal_options);
+    this->home_client_ptr_->async_send_goal(goal_msg, send_goal_options);
   }
 
-
 private:
-
-  rclcpp_action::Client<FollowJointTrajectory>::SharedPtr head_client_ptr_;
-  rclcpp_action::Client<FollowJointTrajectory>::SharedPtr left_arm_client_ptr_;
-  rclcpp_action::Client<FollowJointTrajectory>::SharedPtr right_arm_client_ptr_;
-  rclcpp_action::Client<FollowJointTrajectory>::SharedPtr left_leg_client_ptr_;
-  rclcpp_action::Client<FollowJointTrajectory>::SharedPtr right_leg_client_ptr_;
+  rclcpp_action::Client<FollowJointTrajectory>::SharedPtr home_client_ptr_;
+  rclcpp::TimerBase::SharedPtr timer_;
 
 }; // class HomePosition
 
+
 } // namespace darwin_control
 
-RCLCPP_COMPONENTS_REGISTER_NODE(cpp_srvcli_actions::FibonacciActionClient)
+RCLCPP_COMPONENTS_REGISTER_NODE(darwin_control::HomePosition)
