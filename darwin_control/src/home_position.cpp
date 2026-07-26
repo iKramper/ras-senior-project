@@ -95,7 +95,7 @@ public:
     };
 
     home_point.time_from_start =
-      rclcpp::Duration::from_seconds(3).to_builtin_duration();
+      rclcpp::Duration::from_seconds(10).to_builtin_duration();
 
     goal_msg.trajectory.points.push_back(home_point);
 
