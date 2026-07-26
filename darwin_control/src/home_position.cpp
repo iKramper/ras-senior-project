@@ -17,19 +17,14 @@ class HomePosition : public rclcpp::Node
 {
 public:
 
-  using FollowJointTrajectory =
-    control_msgs::action::FollowJointTrajectory;
-
-  using JointTrajectoryPoint =
-    trajectory_msgs::msg::JointTrajectoryPoint;
-
-  using GoalHandleFollowJointTrajectory =
-    rclcpp_action::ClientGoalHandle<FollowJointTrajectory>;
+  using FollowJointTrajectory = control_msgs::action::FollowJointTrajectory;
+  using JointTrajectoryPoint = trajectory_msgs::msg::JointTrajectoryPoint;
+  using GoalHandleFollowJointTrajectory = rclcpp_action::ClientGoalHandle<FollowJointTrajectory>;
 
   explicit HomePosition(const rclcpp::NodeOptions & options)
   : Node("home_position", options)
   {
-    home_client_ptr_ = rclcpp_action::create_client<FollowJointTrajectory>(
+    this->home_client_ptr_ = rclcpp_action::create_client<FollowJointTrajectory>(
         this,
         "/joint_trajectory_controller_general/follow_joint_trajectory");
 
@@ -49,7 +44,6 @@ public:
     }
 
     auto goal_msg = FollowJointTrajectory::Goal();
-
     goal_msg.trajectory.joint_names =
     {
       "neck_joint",
@@ -72,7 +66,6 @@ public:
     };
 
     JointTrajectoryPoint home_point;
-
     home_point.positions =
     {
       2.66,  // neck_joint
@@ -96,7 +89,6 @@ public:
 
     home_point.time_from_start =
       rclcpp::Duration::from_seconds(10).to_builtin_duration();
-
     goal_msg.trajectory.points.push_back(home_point);
 
     RCLCPP_INFO(this->get_logger(), "Sending goal");
@@ -157,7 +149,6 @@ public:
           result.result->error_string.c_str());
         return;
       }
-
       RCLCPP_INFO(this->get_logger(),"Robot is now in HOME position");
       rclcpp::shutdown();
     };
@@ -169,7 +160,6 @@ private:
   rclcpp::TimerBase::SharedPtr timer_;
 
 }; // class HomePosition
-
 
 } // namespace darwin_control
 
