@@ -14,7 +14,7 @@ joint_trajectory_controller_general:
       - r_thigh_joint
       - r_knee_joint
       - r_ankle_joint
-      - r_foot_joint 
+      - r_foot_joint
       - r_shoulder_joint
       - r_biceps_joint
       - r_elbow_joint
@@ -22,7 +22,7 @@ joint_trajectory_controller_general:
       - l_thigh_joint
       - l_knee_joint
       - l_ankle_joint
-      - l_foot_joint 
+      - l_foot_joint
       - l_shoulder_joint
       - l_biceps_joint
       - l_elbow_joint
@@ -31,7 +31,7 @@ joint_trajectory_controller_general:
     state_interfaces:
       - position
       - velocity
-    action_monitor_rate: 20.0 # Defaults to 20
+    action_monitor_rate: 1.0 # Defaults to 20
 
     allow_partial_joints_goal: true
     interpolate_from_desired_state: true
