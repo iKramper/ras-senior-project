@@ -87,8 +87,7 @@ public:
       1.75   // l_elbow_joint
     };
 
-    home_point.time_from_start =
-      rclcpp::Duration::from_seconds(10).to_builtin_duration();
+    home_point.time_from_start.sec = 10;
     goal_msg.trajectory.points.push_back(home_point);
 
     RCLCPP_INFO(this->get_logger(), "Sending goal");
