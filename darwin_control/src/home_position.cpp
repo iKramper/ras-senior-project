@@ -31,17 +31,36 @@ public:
   explicit HomePosition(const rclcpp::NodeOptions & options)
   : Node("home_position", options)
   {
-    this->client_ptr_ = rclcpp_action::create_client<Fibonacci>(
-      this,
-      "fibonacci");
+    head_client_ptr_ =
+        rclcpp_action::create_client<FollowJointTrajectory>(
+            this,
+            "/joint_trajectory_controller_head/follow_joint_trajectory");
+
+    left_arm_client_ptr_ =
+        rclcpp_action::create_client<FollowJointTrajectory>(
+            this,
+            "/joint_trajectory_controller_left_arm/follow_joint_trajectory");
+
+    right_arm_client_ptr_ =
+        rclcpp_action::create_client<FollowJointTrajectory>(
+            this,
+            "/joint_trajectory_controller_right_arm/follow_joint_trajectory");
+
+    left_leg_client_ptr_ =
+        rclcpp_action::create_client<FollowJointTrajectory>(
+            this,
+            "/joint_trajectory_controller_left_leg/follow_joint_trajectory");
+
+    right_leg_client_ptr_ =
+        rclcpp_action::create_client<FollowJointTrajectory>(
+            this,
+            "/joint_trajectory_controller_right_leg/follow_joint_trajectory");
   }
 
 
   void send_goal()
   {
-       using namespace std::placeholders;
-
-    this->timer_->cancel();
+    using namespace std::placeholders;
 
     if (!this->client_ptr_->wait_for_action_server()) {
       RCLCPP_ERROR(this->get_logger(), "Action server not available after waiting");
