@@ -131,46 +131,10 @@ def generate_launch_description():
         arguments=['joint_state_broadcaster'],
     )
 
-    darwin_controller_spawner_head = Node(
+    darwin_controller_spawner_general = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['joint_trajectory_controller_head',
-                   '--param-file',
-                   controller_config_path,
-        ],
-    )
-
-    darwin_controller_spawner_right_leg = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=['joint_trajectory_controller_right_leg',
-                   '--param-file',
-                   controller_config_path,
-        ],
-    )
-
-    darwin_controller_spawner_right_arm = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=['joint_trajectory_controller_right_arm',
-                   '--param-file',
-                   controller_config_path,
-        ],
-    )
-
-    darwin_controller_spawner_left_leg = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=['joint_trajectory_controller_left_leg',
-                   '--param-file',
-                   controller_config_path,
-        ],
-    )
-
-    darwin_controller_spawner_left_arm = Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=['joint_trajectory_controller_left_arm',
+        arguments=['joint_trajectory_controller_general',
                    '--param-file',
                    controller_config_path,
         ],
@@ -187,39 +151,7 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=joint_state_broadcaster_spawner,
-                on_exit=[darwin_controller_spawner_head],
-            )
-        )
-    )
-    ld.add_action(
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=joint_state_broadcaster_spawner,
-                on_exit=[darwin_controller_spawner_left_arm],
-            )
-        )
-    )
-    ld.add_action(
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=joint_state_broadcaster_spawner,
-                on_exit=[darwin_controller_spawner_left_leg],
-            )
-        )
-    )
-    ld.add_action(
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=joint_state_broadcaster_spawner,
-                on_exit=[darwin_controller_spawner_right_arm],
-            )
-        )
-    )
-    ld.add_action(
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=joint_state_broadcaster_spawner,
-                on_exit=[darwin_controller_spawner_right_leg],
+                on_exit=[darwin_controller_spawner_general],
             )
         )
     )
