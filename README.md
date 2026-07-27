@@ -1,6 +1,6 @@
 # ROBOTIS's DARWIN-MINI in ROS 2
 
-Simulation of the ROBOTIS DARWIN-MINI in ROS 2 Jazzy and Gazebo Harmonic. Currently, the robot can be visualized in RViz2, spawned in Gazebo and be sent to a home position using ROS 2 Control action clients. ROS 2-GZ Bridge is also enabled and working.
+Simulation of the ROBOTIS DARWIN-MINI in ROS 2 Jazzy and Gazebo Harmonic. Currently, the robot can be visualized in RViz2, spawned in Gazebo and be sent to a home position using ROS 2 Control action clients. ROS 2 Gazebo Bridge (abbreviated as ROS 2 GZ Bridge in this documentation) is also enabled and working.
 
 ## Full Repository Structure
 
@@ -76,6 +76,8 @@ Simulation of the ROBOTIS DARWIN-MINI in ROS 2 Jazzy and Gazebo Harmonic. Curren
 - `ros-jazzy-ros2-control`
 - `ros-jazzy-ros2-controllers`
 - `ros-jazzy-gz-ros2-control`
+
+> It is highly recommended to use some Linux distro as your OS. This documentation assumes that you are using a Linux distro. Tutorials for Windows may be added in the future.
 
 ## Package Overview
 
@@ -185,7 +187,9 @@ cd src
 ros2 run darwin_control home_position
 ```
 
-<!-- ## Usage
+## Usage
+
+> A _sourced terminal_ means a terminal where you have run the command `source install/setup.bash` inside your _workspace_ folder and then moved to the `src` directory. All following instructions assume that you are working in a sourced terminal.
 
 ## Verify controllers
 
@@ -193,18 +197,133 @@ Before sending any commands (via action calls, for example) it is highly recomme
 
 #### Check controller status:
 
+```bash
+ros2 control list_controllers
+```
+
+### Expected output:
+
+```bash
+joint_trajectory_controller_general joint_trajectory_controller/JointTrajectoryController  active
+joint_state_broadcaster             joint_state_broadcaster/JointStateBroadcaster          active
+```
+
+All controllers should show `active status. If any controller shows `inactive`or`unconfigured, see the [Troubleshooting](#troubleshooting) section below.
+
 ### Send DARWIN to a given position
 
-### Display DARWIN in RViz2
+DARWIN can be driven to any position in Gazebo via action calls:
 
-### Spawn DARWIN in Gazebo without controllers
+```bash
+ros2 action send_goal --feedback \
+/joint_trajectory_controller_general/follow_joint_trajectory \
+control_msgs/action/FollowJointTrajectory \
+"{
+  trajectory: {
+    joint_names: [
+      'neck_joint',
+      'r_hip_joint',
+      'r_thigh_joint',
+      'r_knee_joint',
+      'r_ankle_joint',
+      'r_foot_joint',
+      'r_shoulder_joint',
+      'r_biceps_joint',
+      'r_elbow_joint',
+      'l_hip_joint',
+      'l_thigh_joint',
+      'l_knee_joint',
+      'l_ankle_joint',
+      'l_foot_joint',
+      'l_shoulder_joint',
+      'l_biceps_joint',
+      'l_elbow_joint'
+    ],
+    points: [
+      {
+        positions: [2.66, 5.23, 0.00, 1.78, 0.00, 0.00, 2.27, 1.54, 3.31, 0.00, 0.00, 1.84, 0.00, 5.23, 2.60, 3.76, 1.75],
+        time_from_start: {
+          sec: 5,
+          nanosec: 0
+        }
+      }
+    ]
+  }
+}"
+```
+
+Just change the numeric values of `positions` for each corresponding joint to construct the desired pose. All joints are revolute and their range of movement is between 0.00 rad (0°) and 5.266 rad (300°). You can also change `time_from_start` if you want a faster or slower movement.
+
+If you wish to move just one joint or a specified set of joints you can also run something like this:
+
+```bash
+ros2 action send_goal --feedback \
+/joint_trajectory_controller_general/follow_joint_trajectory \
+control_msgs/action/FollowJointTrajectory \
+"{
+  trajectory: {
+    joint_names: [
+      'r_shoulder_joint',
+      'r_biceps_joint',
+      'r_elbow_joint'
+    ],
+    points: [
+      {
+        positions: [2.27, 1.54, 3.31],
+        time_from_start: {
+          sec: 1,
+          nanosec: 0
+        }
+      }
+    ]
+  }
+}"
+```
+
+It is important that, for natural movements, the values for `positions` are between the ranges provided in `movement_ranges.md`, which can be found at `docs/` folder of `darwin_control`.
+
+### Visualize DARWIN in RViz2
+
+```bash
+ros2 launch darwin_description display_darwin.launch.py
+```
+
+### Spawn DARWIN in Gazebo (without controllers)
+
+```bash
+ros2 launch darwin_gazebo darwin_gz.launch.py
+```
+
+ROS 2 GZ Bridge will be enabled.
 
 ## Troubleshooting
 
 ### Controllers not activating automatically?
 
+If `ros2 control list_controllers shows any controller as inactive or unconfigured, you can activate them manually:
+
+```bash
+ros2 control switch_controllers \
+  --activate joint_state_broadcaster \
+  --activate right_arm_controller \
+  --activate left_arm_controller \
+  --activate head_controller
+```
+
+Verify all controllers are now active:
+
+```bash
+ros2 control list_controllers
+```
+
+All controllers should show `active` status.
+
 ### The controllers never activate automatically?
 
-### Robot not showing in Gazebo simulation?
+If you notice that the controllers never activate automatically and you constantly have to activate them manually, try to run the Gazebo simulation when it launches. The controllers try always to initialize when Gazebo opens but if the simulation is not running, they will fail.
 
-## Acknowledgements -->
+<!-- ### Robot not showing in Gazebo simulation?
+
+## Acknowledgements
+
+## Future work -->
