@@ -77,8 +77,6 @@ Simulation of the ROBOTIS DARWIN-MINI in ROS 2 Jazzy and Gazebo Harmonic. Curren
 - `ros-jazzy-ros2-controllers`
 - `ros-jazzy-gz-ros2-control`
 
----
-
 ## Package Overview
 
 ### darwin_description
@@ -146,23 +144,23 @@ darwin/src/gazebo/
 - Node `home_position` that drives DARWIN to the HOME position
 - URDF file that defines the controllable joints and their parameters
 
----
-
 ## Getting Started
 
-### 1. Create a workspace for the project
+### 1. Create a workspace and a source folder for the project
 
 ```bash
-mkdir darwin
-cd darwin
+mkdir -p darwin/src
+cd darwin/src
 ```
 
 ### 2. Clone and build
 
 ```bash
 git clone https://github.com/iKramper/ros-2-robotis-darwin-mini.git .
+cd ..
 colcon build
 source install/setup.bash
+cd src
 ```
 
 ### 3. Launch simulation (Gazebo)
@@ -179,15 +177,34 @@ This launches:
 
 ### 4. Send robot to HOME position
 
-Open another terminal and, within the workspace that you have created, execute:
+Open another terminal and, within the folder of the workspace that you have created, execute:
 
 ```bash
 source install/setup.bash
+cd src
 ros2 run darwin_control home_position
 ```
 
----
+<!-- ## Usage
 
-## Usage
+## Verify controllers
 
-### Send
+Before sending any commands (via action calls, for example) it is highly recommended to check whether the controllers are active. Controller activation can sometimes fail during launch.
+
+#### Check controller status:
+
+### Send DARWIN to a given position
+
+### Display DARWIN in RViz2
+
+### Spawn DARWIN in Gazebo without controllers
+
+## Troubleshooting
+
+### Controllers not activating automatically?
+
+### The controllers never activate automatically?
+
+### Robot not showing in Gazebo simulation?
+
+## Acknowledgements -->
