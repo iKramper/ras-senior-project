@@ -145,6 +145,7 @@ darwin/src/gazebo/
 - Launch file to spawn DARWIN in Gazebo with a predefined pose
 - Node `home_position` that drives DARWIN to the HOME position
 - URDF file that defines the controllable joints and their parameters
+- Information about predefined joint limits in `docs/`.
 
 ## Getting Started
 
