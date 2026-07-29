@@ -191,17 +191,17 @@ ros2 run darwin_control home_position
 
 > A _sourced terminal_ means a terminal where you have run the command `source install/setup.bash` inside your _workspace_ folder and then moved to the `src` directory. All following instructions assume that you are working in a sourced terminal.
 
-## Verify controllers
+### Verify controllers
 
 Before sending any commands (via action calls, for example) it is highly recommended to check whether the controllers are active. Controller activation can sometimes fail during launch.
 
-#### Check controller status:
+##### Check controller status:
 
 ```bash
 ros2 control list_controllers
 ```
 
-### Expected output:
+#### Expected output:
 
 ```bash
 joint_trajectory_controller_general joint_trajectory_controller/JointTrajectoryController  active
@@ -320,10 +320,24 @@ All controllers should show `active` status.
 
 ### The controllers never activate automatically?
 
-If you notice that the controllers never activate automatically and you constantly have to activate them manually, try to run the Gazebo simulation when it launches. The controllers try always to initialize when Gazebo opens but if the simulation is not running, they will fail.
+If you notice that the controllers never activate automatically and you constantly have to activate them manually, try to run the Gazebo simulation as soon as it launches. The controllers try always to initialize as soon as Gazebo opens but if the simulation is not running, they will fail.
 
-<!-- ### Robot not showing in Gazebo simulation?
+### Robot not showing in Gazebo simulation?
+
+If some parts of the DARWIN robot do not appear or the robot does not appear at all you are probably running `darwin_ctrl.launch.py` from your workspace root instead of the `src` directory.
 
 ## Acknowledgements
 
-## Future work -->
+This project includes resources from:
+
+- https://github.com/japonophile/darwin
+  - Resources: `meshes` and `urdf` folders and their files
+  - License: MIT
+  - Copyright © 2016 Antoine Choppin
+
+The content of those directories was used to display DARWIN in RViz2, and later the files were modified in `darwin_gazebo` and `darwin_description` packages by adding plugins for Gazebo and ROS 2 Controllers.
+
+## Future work
+
+- The collisions of the robot do not appear to work. Some trajectories may cross the body of the robot. The original URDF files could be reviewed.
+- Future work may include poses for the robot or even implementing a walking algorithm, all of this via action calls or proper tools
